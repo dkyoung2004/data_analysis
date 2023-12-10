@@ -11,22 +11,40 @@ typedef struct doubly_linked_list
 
 }DListNode;
 
+DListNode* head;
+DListNode* tail;
+
 // 초기화
 void init() {
     DListNode *head = (DListNode *)malloc(sizeof(DListNode));
     DListNode *tail = (DListNode *)malloc(sizeof(DListNode));
-    head -> prev = tail;
     head -> next = tail;
     tail -> prev = head;
-    tail -> next = head;
 }
 
-void ll_print_rev(DListNode* head){
+void ll_print_rev(DListNode* tail){
     DListNode* p;
-    for (p = head->prev; p!= head; p = p->prev){
+    for (p = tail->prev; p!= tail; p = p->prev){
         printf(" < = |ID :%d|Data:%d| => ",p->ID , p -> data);
     }
     printf("\n");
+}
+
+DListNode* ll_search(int ID){
+    int index = ID;
+    DListNode* temp = head->next;
+    if(head->next == tail){
+        return head;
+    }
+    while (temp != tail)
+    {
+        if(temp->ID == index){
+            return temp;
+        }
+        temp = temp->next;
+    }
+    return head;
+
 }
 void ll_input(DListNode *before, element data , element ID)
 {
@@ -68,25 +86,32 @@ void ll_delete(DListNode *head, DListNode *removed)
 
 int main(void)
 {
-    init();
+    DListNode *head = (DListNode *)malloc(sizeof(DListNode));
+    DListNode *tail = (DListNode *)malloc(sizeof(DListNode));
+    head->next = tail;
+    tail->prev = head;
+
     int order;
-    int a,b;
-    a = 0;
-    b = 0;
+    int input_ID,input_data,P_ID;
+
+    input_data = 0;
+    input_ID = 0;
+    P_ID = 0;
     order = 1;
+
     while (order != 0)
     {
         printf("1. input 2. input_rev 3. print 4. print_rev 5. update 6. delete 0. exit \n");
         scanf("%d", &order);
         if(order == 1){
-            printf("Data와 ID를 입력하시오: ");
-            scanf("%d %d",&a,&b);
-            ll_input(node,a,b);
+            printf("노드의 위치 ID,Data,ID를 입력하시오: ");
+            scanf("%d %d %d",&P_ID,&input_ID,&input_data);
+            ll_input(ll_search(P_ID),input_ID,input_data);
         }
         else if(order == 2){
-            printf("Data와 ID를 입력하시오: ");
-            scanf("%d %d", &a, &b);
-            ll_input_rev(head, a, b);
+            printf("노드의 위치 ID,Data,ID를 입력하시오: ");
+            scanf("%d %d %d", &P_ID, &input_ID, &input_data);
+            ll_input(ll_search(P_ID), input_ID, input_data);
         }
         else if(order == 3){
             ll_print(head);
@@ -96,15 +121,16 @@ int main(void)
             ll_print_rev(head);
         }
         else if (order == 5)
-        {
-            ll_print_rev(head);
+        {   
+            printf("ID를 입력하시오:");
+            scanf("%d",&P_ID);
+            ll_search(P_ID);
         }
         else if (order == 6)
         {
             ll_delete(head,head->next);
         }
     }
-\\
     return 0;
 }
 
