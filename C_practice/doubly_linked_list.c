@@ -12,9 +12,13 @@ typedef struct doubly_linked_list
 }DListNode;
 
 // 초기화
-void init(DListNode* head) {
-    head -> prev = head;
-    head -> next = head;
+void init() {
+    DListNode *head = (DListNode *)malloc(sizeof(DListNode));
+    DListNode *tail = (DListNode *)malloc(sizeof(DListNode));
+    head -> prev = tail;
+    head -> next = tail;
+    tail -> prev = head;
+    tail -> next = head;
 }
 
 void ll_print_rev(DListNode* head){
@@ -64,8 +68,7 @@ void ll_delete(DListNode *head, DListNode *removed)
 
 int main(void)
 {
-    DListNode *head = (DListNode *)malloc(sizeof(DListNode));
-    init(head);
+    init();
     int order;
     int a,b;
     a = 0;
@@ -78,7 +81,7 @@ int main(void)
         if(order == 1){
             printf("Data와 ID를 입력하시오: ");
             scanf("%d %d",&a,&b);
-            ll_input(head,a,b);
+            ll_input(node,a,b);
         }
         else if(order == 2){
             printf("Data와 ID를 입력하시오: ");
@@ -101,8 +104,7 @@ int main(void)
             ll_delete(head,head->next);
         }
     }
-    
-    free(head);
+\\
     return 0;
 }
 
