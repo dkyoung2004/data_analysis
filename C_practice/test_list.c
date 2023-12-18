@@ -1,5 +1,6 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+void ll_input(), ll_input_rev(), ll_print(), ll_print_rev(), ll_update(), ll_delete();
 
 struct NODE
 {
@@ -8,35 +9,13 @@ struct NODE
     struct NODE *next;
 } *head, *tail, *ptr, *ptr_t;
 
-void del_process(del_ID)
-{
-    struct NODE *tmp1, *tmp2;
-    tmp1 = ptr->prev;
-    tmp2 = ptr->next;
-    tmp1->next = tmp2;
-    tmp2->prev = tmp1;
-    free(ptr);
-    return;
-}
-
-void ll_print()
-{
-    ptr = head;
-    printf("(ID, Values): ");
-    while (ptr != NULL)
-    {
-        printf("(%d, %d) ", ptr->ID, ptr->value);
-        ptr = ptr->next;
-    }
-    printf("\n");
-}
-
 void ll_input()
 {
     int inid, invalue;
     printf("ID, value: ");
     scanf("%d, %d", &inid, &invalue);
     ptr = (struct NODE *)malloc(sizeof(struct NODE));
+    printf("Value is : %d" , invalue);
     if (head == NULL)
     {
         head = ptr;
@@ -58,6 +37,18 @@ void ll_input()
     }
     tail = ptr;
     ll_print();
+}
+
+void ll_print()
+{
+    ptr = head;
+    printf("(ID, Values): ");
+    while (ptr != NULL)
+    {
+        printf("(%d, %d) ", ptr->ID, ptr->value);
+        ptr = ptr->next;
+    }
+    printf("\n");
 }
 
 void ll_update()
@@ -103,13 +94,18 @@ void ll_delete()
     }
     else
     {
+        struct NODE *tmp1, *tmp2;
         ptr = ptr->next;
         ptr_t = ptr_t->prev;
         if (ptr == ptr_t)
         {
             if (ptr->ID == del_ID)
             {
-                del_process(del_ID);
+                tmp1 = ptr->prev;
+                tmp2 = ptr->next;
+                tmp1->next = tmp2;
+                tmp2->prev = tmp1;
+                free(ptr);
                 return;
             }
             else
@@ -121,13 +117,20 @@ void ll_delete()
         {
             if (ptr->ID == del_ID)
             {
-                del_process(del_ID);
+                tmp1 = ptr->prev;
+                tmp2 = ptr->next;
+                tmp1->next = tmp2;
+                tmp2->prev = tmp1;
+                free(ptr);
                 return;
             }
             if (ptr_t->ID == del_ID)
             {
-                ptr = ptr_t;
-                del_process(del_ID);
+                tmp1 = ptr_t->prev;
+                tmp2 = ptr_t->next;
+                tmp1->next = tmp2;
+                tmp2->prev = tmp1;
+                free(ptr_t);
                 return;
             }
             ptr = ptr->next;
@@ -136,7 +139,47 @@ void ll_delete()
     }
 }
 
-int main()
+void ll_input_rev()
+{
+    int inid, invalue;
+    printf("ID, value: ");
+    scanf("%d, %d", &inid, &invalue);
+    ptr = (struct NODE *)malloc(sizeof(struct NODE));
+    if (tail == NULL)
+    {
+        tail = ptr;
+    }
+    else
+    {
+        head->prev = ptr;
+    }
+    ptr->ID = inid;
+    ptr->value = invalue;
+    ptr->prev = NULL;
+    if (ptr == tail)
+    {
+        ptr->next = NULL;
+    }
+    else
+    {
+        ptr->next = head;
+    }
+    head = ptr;
+    ll_print();
+}
+
+void ll_print_rev()
+{
+    ptr = head;
+    printf("(ID, Values): ");
+    while (ptr != NULL)
+    {
+        printf("(%d, %d) ", ptr->ID, ptr->value);
+        ptr = ptr->next;
+    }
+    printf("\n");
+}
+void main()
 {
     head = NULL;
     int index, flag = 0;
@@ -150,7 +193,7 @@ int main()
         }
         else if (index == 2)
         {
-            // ll_input_rev();
+            ll_input_rev();
         }
         else if (index == 3)
         {
@@ -158,7 +201,7 @@ int main()
         }
         else if (index == 4)
         {
-            // ll_print_rev();
+            ll_print_rev();
         }
         else if (index == 5)
         {
@@ -178,5 +221,5 @@ int main()
             printf("Enter Again(between 1 and 7)\n");
         }
     }
-    return 0;
+    return;
 }
