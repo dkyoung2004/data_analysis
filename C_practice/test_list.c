@@ -1,82 +1,182 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 
-typedef int element;
-// 이중 연결리스트 노드 타입
-typedef struct DListNode
+struct NODE
 {
-    element data;
-    struct DListNode *llink;
-    struct DListNode *rlink;
-} DListNode;
-// 이중 연결리스트 초기화
-void init(DListNode *phead)
+    int ID, value;
+    struct NODE *prev;
+    struct NODE *next;
+} *head, *tail, *ptr, *ptr_t;
+
+void del_process(del_ID)
 {
-    phead->llink = phead;
-    phead->rlink = phead;
+    struct NODE *tmp1, *tmp2;
+    tmp1 = ptr->prev;
+    tmp2 = ptr->next;
+    tmp1->next = tmp2;
+    tmp2->prev = tmp1;
+    free(ptr);
+    return;
 }
-// 이중 연결리스트 상태 출력
-void print_dlist(DListNode *phead)
+
+void ll_print()
 {
-    DListNode *p;
-    for (p = phead->rlink; p != phead; p = p->rlink)
+    ptr = head;
+    printf("(ID, Values): ");
+    while (ptr != NULL)
     {
-        printf("<-| |%d| |-> ", p->data);
+        printf("(%d, %d) ", ptr->ID, ptr->value);
+        ptr = ptr->next;
     }
     printf("\n");
 }
-// 새로운 데이터를 노드 before의 오른쪽에 삽입
-void dinsert(DListNode *before, element data)
+
+void ll_input()
 {
-    DListNode *newnode = (DListNode *)malloc(sizeof(DListNode));
-    newnode->data = data;
-    newnode->llink = before;
-    newnode->rlink = before->rlink;
-    before->rlink->llink = newnode;
-    before->rlink = newnode;
+    int inid, invalue;
+    printf("ID, value: ");
+    scanf("%d, %d", &inid, &invalue);
+    ptr = (struct NODE *)malloc(sizeof(struct NODE));
+    if (head == NULL)
+    {
+        head = ptr;
+    }
+    else
+    {
+        tail->next = ptr;
+    }
+    ptr->ID = inid;
+    ptr->value = invalue;
+    ptr->next = NULL;
+    if (ptr == head)
+    {
+        ptr->prev = NULL;
+    }
+    else
+    {
+        ptr->prev = tail;
+    }
+    tail = ptr;
+    ll_print();
 }
-// 노드 removed를 삭제
-void ddelete(DListNode *head, DListNode *removed)
+
+void ll_update()
 {
-    if (removed == head)
+    int new_ID, new_value;
+    printf("/tID for update: ");
+    scanf("%d", &new_ID);
+    ptr = head;
+    while (ptr != NULL)
+    {
+        if (ptr->ID == new_ID)
+        {
+            printf("\tEnter the new value for this ID: ");
+            scanf("%d", &new_value);
+            ptr->value = new_value;
+            ll_print();
+            return;
+        }
+        ptr = ptr->next;
+    }
+}
+
+void ll_delete()
+{
+    int del_ID;
+    printf("\tID for delete: ");
+    scanf("%d", &del_ID);
+    ptr = head;
+    ptr_t = tail;
+    if (ptr->ID == del_ID)
+    {
+        head = ptr->next;
+        free(ptr);
+        ll_print();
         return;
-    head->rlink = removed->rlink;
-    removed->rlink->llink = removed->llink;
-    free(removed);
+    }
+    else if (ptr_t->ID == del_ID)
+    {
+        tail = ptr->prev;
+        free(ptr_t);
+        ll_print();
+        return;
+    }
+    else
+    {
+        ptr = ptr->next;
+        ptr_t = ptr_t->prev;
+        if (ptr == ptr_t)
+        {
+            if (ptr->ID == del_ID)
+            {
+                del_process(del_ID);
+                return;
+            }
+            else
+            {
+                return;
+            }
+        }
+        while (ptr != ptr_t)
+        {
+            if (ptr->ID == del_ID)
+            {
+                del_process(del_ID);
+                return;
+            }
+            if (ptr_t->ID == del_ID)
+            {
+                ptr = ptr_t;
+                del_process(del_ID);
+                return;
+            }
+            ptr = ptr->next;
+            ptr_t = ptr_t->prev;
+        }
+    }
 }
-// 메인
-int main(void)
+
+int main()
 {
-    DListNode *head = (DListNode *)malloc(sizeof(DListNode));
-    init(head);
-    printf("추가 단계\n");
-    for (int i = 0; i < 5; i++)
+    head = NULL;
+    int index, flag = 0;
+    while (flag == 0)
     {
-        dinsert(head, i);
-        printDlist(head);
+        printf("Enter [(1)Input (2)Input_rev (3)Print (4)Print_rev (5)Update (6)Delete (7)Exit] : ");
+        scanf("%d", &index);
+        if (index == 1)
+        {
+            ll_input();
+        }
+        else if (index == 2)
+        {
+            // ll_input_rev();
+        }
+        else if (index == 3)
+        {
+            ll_print();
+        }
+        else if (index == 4)
+        {
+            // ll_print_rev();
+        }
+        else if (index == 5)
+        {
+            ll_update();
+        }
+        else if (index == 6)
+        {
+            ll_delete();
+        }
+        else if (index == 7)
+        {
+            printf("Exit this program\n");
+            flag = 1;
+        }
+        else
+        {
+            printf("Enter Again(between 1 and 7)\n");
+        }
     }
-    printf("\n삭제 단계\n");
-    for (int i = 0; i < 5; i++)
-    {
-        printDlist(head);
-        ddelete(head, head->rlink);
-    }
-    free(head);
     return 0;
 }
-
-/* 실행결과
-삽입 단계
-<-| |0| |->
-<-| |1| |-> <-| |0| |->
-<-| |2| |-> <-| |1| |-> <-| |0| |->
-<-| |3| |-> <-| |2| |-> <-| |1| |-> <-| |0| |->
-<-| |4| |-> <-| |3| |-> <-| |2| |-> <-| |1| |-> <-| |0| |->
-
-삭제 단계
-<-| |4| |-> <-| |3| |-> <-| |2| |-> <-| |1| |-> <-| |0| |->
-<-| |3| |-> <-| |2| |-> <-| |1| |-> <-| |0| |->
-<-| |2| |-> <-| |1| |-> <-| |0| |->
-<-| |1| |-> <-| |0| |->
-<-| |0| |->
-*/
